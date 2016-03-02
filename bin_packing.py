@@ -6,7 +6,10 @@
 
 """
 BIN_PACKING_SOLUTION:
-    We sorted the list of rectangles from smallest to largest. Then they were placed into columns until they reached a cuttoff limit and then a new column is started at the top. It is continued until the list is empty. Our cuttoff limit value is based on finding the average rectangle size using the total x and total y values. A traversing method was used to find these values. Which is then multiplied by the average number of rectangles per column. 
+   We sorted the list of rectangles from smallest to largest. 
+   Then they were placed into columns until they reached a cuttoff limit and then a new column is started at the top. 
+   It is continued until the list is empty. Our cuttoff limit value is based on finding the average rectangle size using the total x and total y values.
+   A traversing method was used to find these values. Which is then multiplied by the average number of rectangles per column. 
 --------------------------------------------------
 RETURNS: a list of tuples that designate the top left corner placement,
          e.g. [(x1, y1), ... (xn, yn)] where

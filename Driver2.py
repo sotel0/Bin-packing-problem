@@ -1,12 +1,52 @@
 # ----------------------------------------------
 # CSCI 338, Spring 2016, Bin Packing Assignment
 # Author: John Paxton
-# Last Modified: February 24, 2016
+# Last Modified: January 19, 2016
 # ----------------------------------------------
 
 import random
 import time
 import bin_packing
+
+# -----------------------------------------------
+
+"""
+GENERATE_FILE:
+    Randomly produce rectangles and write them to a file
+--------------------------------------------------
+file_name: the name of the output file
+min_dimension: the smallest value for the width or length of a rectangle
+max_dimension: the largest value for the width or length of a rectangle
+number_rectangles: number of rectangles to generate
+--------------------------------------------------
+RETURNS: nothing
+  
+"""
+
+def generate_file(file_name, min_dimension, max_dimension, number_rectangles):
+    file = open(file_name, "w")
+    
+    min_dimension = int(min_dimension)  # must be an integer
+    if min_dimension < 1:               # minimum value is 1
+        min_dimension = 1
+
+    max_dimension = int(max_dimension)  # must be an integer
+    if max_dimension > 1000:            # maximum value is 1000
+        max_dimension = 1000
+
+    if min_dimension > max_dimension:   # swap if necessary
+        temp = min_dimension
+        min_dimension = max_dimension
+        max_dimension = temp
+        
+    for square in range(number_rectangles):
+        width = random.randint(min_dimension, max_dimension)
+        length = random.randint(min_dimension, max_dimension)
+        file.write(str(width) + " " + str(length) + "\n")
+        
+    file.close()
+
+generate_file("squares.txt", 1, 1000, 5000)
 
 # -----------------------------------------------
 
@@ -223,6 +263,7 @@ def solve_problem(file_name):
     start = time.time()
     upper_left_coordinates = bin_packing.find_solution(clone)
     time_elapsed = time.time() - start
+    print("Time elapsed in seconds =", time_elapsed)
 
     # convert student solution to show upper left and lower right coordinates
     rectangle_coordinates = corner_coordinates(rectangles, upper_left_coordinates)
@@ -231,26 +272,22 @@ def solve_problem(file_name):
     naive_left_coordinates = find_naive_solution(rectangles)
     naive_rectangle_coordinates = corner_coordinates(rectangles, naive_left_coordinates)
     naive_perimeter = evaluate_solution(naive_rectangle_coordinates)
+    print("Bounding Rectangle Perimeter of Naive Solution =", naive_perimeter)
 
 
     if is_solution_valid (rectangle_coordinates):   # is student solution valid?
         perimeter = evaluate_solution(rectangle_coordinates)
+        print("Bounding Rectangle Perimeter of Your Solution =", perimeter)
         if time_elapsed > 5.0:                      # is student solution fast enough?
             print("Error.  Time Limit Exceeded.")
-            perimeter = 0                           # answer is penalized
+            perimeter = 2 * naive_perimeter         # answer is penalized
         
     else:
         print("Error.  Overlapping Rectangles in Solution.")
-        perimeter = 0                               # answer is penalized
+        perimeter = 2 * naive_perimeter             # answer is penalized
 
-    improvement = naive_perimeter / perimeter
-    return improvement
+    print("Percentage Improvement Over Naive Solution =", 100 - (perimeter / naive_perimeter) * 100)
 
 # -----------------------------------------------
 
-data_files = 70
-total_improvement = 0
-for i in range(1, data_files + 1):
-    total_improvement = total_improvement + solve_problem("data/" + str(i) + ".in")
-
-print("Average N-Fold Improvement Over Naive Method:", total_improvement / data_files)
+solve_problem("squares.txt")
